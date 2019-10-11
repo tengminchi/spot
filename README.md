@@ -1,1 +1,27 @@
 # spot
+finaldata=read.csv("E:/TSDC/finaldata_2.csv")
+class(finaldata$first90day)
+finaldata[,27:29]<-lapply(finaldata[27:29],as.character)
+finaldata[,27:29]<-lapply(finaldata[27:29],as.numeric)
+finaldata$times=finaldata$first90day/finaldata$first30day
+finaldata$advert<-ifelse(finaldata$times>=6,1,0)
+dim(finaldata[finaldata$Region=="us"&finaldata$advert==1,])
+dim(finaldata[finaldata$Region=="us",])
+selectus<-data.frame(Song_title=finaldata[finaldata$Region=="us",2])
+selectgb<-data.frame(Song_title=finaldata[finaldata$Region=="gb",2])
+comselect<-merge(selectus,selectgb,by="Song_title")
+levels(finaldata$Region)
+finaldata$advert<-as.factor(finaldata$advert)
+set.seed(125)
+
+xdata=finaldata
+YvarName="advert"
+p=0.8
+index<-sample(2,nrow(global),replace = T,prob = c(p,1-p))
+us=subset(finaldata,finaldata$Region=='us')
+gb=subset(finaldata,finaldata$Region=='gb')
+global=rbind(us,gb)
+Dtrain=global[index==1,]
+Dtest=global[index==2,]
+Ytrain=Dtrain[,YvarName]
+Ytest=Dtest[,YvarName]
